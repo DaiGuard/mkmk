@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="world_name" default="ai_course.world" />
+
+  <!-- ワールドファイルからGAZEBOを起動する -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">    
+    <arg name="world_name" value="$(find mkmk_gazebo)/worlds/$(arg world_name)" />
+    <arg name="debug" value="false" />
+    <arg name="gui" value="true" />
+    <arg name="paused" value="false" />
+    <arg name="use_sim_time" value="true" />
+    <arg name="headless" value="false" />    
+  </include>
+
+</launch>
