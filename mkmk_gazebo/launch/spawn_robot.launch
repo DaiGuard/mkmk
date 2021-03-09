@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+
+<launch>
+
+  <!-- パラメータ -->
+  <arg name="robot_name" default="robot" />
+  <arg name="robot_namespace" default="/" />  
+  <arg name="x" default="0.0" />
+  <arg name="y" default="0.0" />
+  <arg name="z" default="0.01" />
+  <arg name="yaw" default="0.0" />  
+
+  <!-- ロボット記述を読み込む -->
+  <include file="$(find mkmk_description)/launch/mkmk_description.launch" >
+    <arg name="robot_namespace" value="$(arg robot_namespace)" />
+  </include>
+
+  <rosparam command="load" file="$(find mkmk_gazebo)/config/controller.yaml" />
+
+  <!-- Spawn controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner"
+        args="joint_state_controller diff_drive_controller" />
+
+  <!-- Spawn robot in gazebo -->
+  <node name="spawn_agv_model" pkg="gazebo_ros" type="spawn_model"
+      args="-x $(arg x)
+            -y $(arg y)
+            -z $(arg z)
+            -Y $(arg yaw)
+            -unpause
+            -urdf
+            -model $(arg robot_name)
+            -param $(arg robot_namespace)robot_description" 
+      respawn="false" 
+      output="screen" />  
+
+</launch>

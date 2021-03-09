@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<launch>
+
+  <!-- パラメータ -->
+  <arg name="robot_name" default="robot" />
+  <arg name="robot_namespace" default="/" />  
+  <arg name="x" default="0.0" />
+  <arg name="y" default="0.0" />
+  <arg name="z" default="0.01" />
+  <arg name="yaw" default="0.0" />  
+
+  <!-- Gazebo GUIを起動する -->
+  <include file="$(find mkmk_gazebo)/launch/course.launch">
+    <arg name="world_name" value="ai_course.world" />
+  </include>
+
+  <!-- ロボットをスポーンする -->
+  <include file="$(find mkmk_gazebo)/launch/spawn_robot.launch">
+    <arg name="robot_name" value="$(arg robot_name)" />
+    <arg name="robot_namespace" value="$(arg robot_namespace)" />  
+    <arg name="x" value="$(arg x)" />
+    <arg name="y" value="$(arg y)" />
+    <arg name="z" value="$(arg z)" />
+    <arg name="yaw" value="$(arg yaw)" />  
+  </include>
+
+</launch>

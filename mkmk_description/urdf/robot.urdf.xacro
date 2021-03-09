@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+
+<robot name="my_robot"  xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ### properties ### -->  
+  <xacro:property name="M_PI" value="3.14159" />  
+
+  <!-- base_link -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://mkmk_description/meshes/base_link.stl" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://mkmk_description/meshes/base_link.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="10.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+                         iyy="1.0" iyz="0.0"
+                                   izz="1.0" />
+    </inertial>
+  </link>
+
+  <gazebo reference="base_link">
+    <mu1 value="0.1" />
+    <mu2 value="0.1" />
+    <kp  value="10000000.0" />
+    <kd  value="1.0" />
+    <fdir1 value="1 0 0" />
+  </gazebo>
+
+  <link name="right_wheel_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://mkmk_description/meshes/wheel_link.stl" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://mkmk_description/meshes/wheel_link.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                         iyy="0.01" iyz="0.0"
+                                   izz="0.01" />
+    </inertial>
+  </link>
+
+  <gazebo reference="right_wheel_link">
+    <mu1 value="0.3" />
+    <mu2 value="0.3" />
+    <kp  value="10000000.0" />
+    <kd  value="1.0" />
+    <fdir1 value="1 0 0" />
+  </gazebo>
+
+  <link name="left_wheel_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://mkmk_description/meshes/wheel_link.stl" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://mkmk_description/meshes/wheel_link.stl" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.01" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
+                         iyy="0.01" iyz="0.0"
+                                   izz="0.01" />
+    </inertial>
+  </link>
+
+  <gazebo reference="left_wheel_link">
+    <mu1 value="0.3" />
+    <mu2 value="0.3" />
+    <kp  value="10000000.0" />
+    <kd  value="1.0" />
+    <fdir1 value="1 0 0" />
+  </gazebo>
+
+  <link name="camera_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://mkmk_description/meshes/camera_link.stl" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://mkmk_description/meshes/camera_link.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="right_wheel_to_base" type="continuous">
+    <parent link="base_link" />
+    <child link="right_wheel_link" />      
+    <origin xyz="0.04 -0.05 0.0075" rpy="${M_PI/2} 0 0" />
+    <axis xyz="0 0 -1" />
+  </joint>
+
+  <joint name="left_wheel_to_base" type="continuous">
+    <parent link="base_link" />
+    <child link="left_wheel_link" />      
+    <origin xyz="0.04 0.05 0.0075" rpy="${-M_PI/2} 0 0" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <joint name="camera_to_base" type="fixed">
+    <parent link="base_link" />
+    <child link="camera_link" />      
+    <origin xyz="0.075 0 0.071" rpy="${M_PI/2} 0 ${M_PI/2}" />    
+  </joint>
+
+  <transmission name="right_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="right_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="right_wheel_to_base">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>  
+
+  <transmission name="left_wheel_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="left_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="left_wheel_to_base">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>  
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/</robotNamespace>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="camera_link">
+    <sensor type="camera" name="camera_sensor">
+      <update_rate>10.0</update_rate>
+      <camera name="camera_sensor">
+        <pose>0 0 0 ${-M_PI/2} ${-M_PI/2} 0</pose>
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>800</width>
+          <height>600</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>camera_sensor</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>camera_link</frameName>
+        <hackBaseline>0.0</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+      </plugin>
+    </sensor>
+  </gazebo>
+  
+</robot>
